@@ -1,0 +1,28 @@
+{
+  "name": "net.tnrd.serializableinterface",
+  "version": "2.2.1",
+  "displayName": "Serializable Interface",
+  "unity": "2021.1",
+  "description": "A wrapper that allows serialization of interfaces that supports both UnityEngine.Object and regular object types",
+  "keywords": [
+    "serialize",
+    "interface",
+    "poco",
+    "serialization"
+  ],
+  "author": {
+    "name": "TNRD",
+    "url": "https://www.tnrd.net"
+  },
+  "samples": [
+    {
+      "displayName": "Source Generation",
+      "description": "Contains a dll that will allow you to use source generation",
+      "path": "Samples~/SourceGeneration"
+    }
+  ],
+  "publishConfig": {
+    "registry": "https://package.openupm.com"
+  },
+  "_fingerprint": "7fa39934cea4a17c6196a4c18952f2eff9f93d79"
+}
