@@ -5,6 +5,7 @@ using UnityEngine;
 using Unity.Mathematics;
 using static Unity.Mathematics.math;
 using System.Linq;
+using InteractiveFloor.Detect;
 
 namespace InteractiveFloor
 {
@@ -80,6 +81,15 @@ namespace InteractiveFloor
             ///位置（x, y)の中央値
             /// </summary>
             public float2 positionMedian => float2(this.xMedian, this.yMedian);
+            /// <summary>
+            /// ひとつ前のフレームの位置（x, y）の中央値
+            /// </summary>
+            public float2 previousPositionMedian { get; private set; }
+            /// <summary>
+            /// 同一人物として扱うためのラベル
+            /// </summary>
+            public string TrackingLabel { get; set; } = string.Empty;
+            public ViewerType Type { get; set; }
 
             /// <summary>
             /// X座標上の位置の過去の値を保持する配列
@@ -138,6 +148,7 @@ namespace InteractiveFloor
                 }
 
                 CalculatePositionMedian();
+                previousPositionMedian = positionMedian;
             }
 
             /// <summary>
@@ -160,6 +171,7 @@ namespace InteractiveFloor
                 }
 
                 CalculatePositionMedian();
+                previousPositionMedian = positionMedian;
             }
 
             /// <summary>
@@ -173,6 +185,8 @@ namespace InteractiveFloor
                     _isDead = true;
                     return;
                 }
+
+                previousPositionMedian = positionMedian;
 
                 ShiftRight(_xHistory);
                 ShiftRight(_yHistory);

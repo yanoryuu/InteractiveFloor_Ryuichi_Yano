@@ -1,12 +1,17 @@
 using UnityEngine;
+using InteractiveFloor.Detect;
 
 public class People : Entity
 {
     
     // 移動
-    public override void Move(Vector3 direction)
+    public override void Move(Vector3 target)
     {
-        
+        transform.position = Vector3.Lerp(
+            transform.position,  // 現在地
+            target,     // 目標地
+            Consts.EntityMoveSpeed * Time.deltaTime
+        );
     }
 
     // ダメージを受ける
@@ -17,12 +22,5 @@ public class People : Entity
         {
             Die();
         }
-    }
-
-    // 死亡
-    public override void Die()
-    {
-        Debug.Log($"{Type} has died.");
-        ReturnToPool();
     }
 }

@@ -13,7 +13,7 @@ namespace InteractiveFloor
     /// インタラクティブフロア マネージャ
     /// </summary>
     [ExecuteAlways]
-    public class InteractiveFloorManager : MonoBehaviour
+    public class                                                                                                 InteractiveFloorManager : MonoBehaviour
     {
         #region Parameters and Variables
         /// <summary>
