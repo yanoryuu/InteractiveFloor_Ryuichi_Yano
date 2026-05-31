@@ -61,7 +61,7 @@ public class InteractiveView : MonoBehaviour
 
     private Entity SpawnEntity(Viewer viewer)
     {
-        var entityType = viewer.Type == ViewerType.God ? EntityType.People : EntityType.Enemy;
+        var entityType = viewer.Type == ViewerType.God ? EntityType.Manuchan : EntityType.Enemy;
         return _entityManager.GetEntity<Entity>(entityType, viewer.Position, 100);
     }
 }

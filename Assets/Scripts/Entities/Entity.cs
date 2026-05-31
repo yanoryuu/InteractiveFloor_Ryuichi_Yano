@@ -1,3 +1,5 @@
+using System;
+using R3;
 using UnityEngine;
 public abstract class Entity : MonoBehaviour
 {
@@ -6,6 +8,11 @@ public abstract class Entity : MonoBehaviour
     public int Health { get; set; }
     public bool IsActive { get; private set; }
 
+    public ReactiveProperty<float> ManuChanGrowthRate { get; set; } = new(0.0f); // 成長率
+
+    public ReactiveProperty<int> GrowthStage { get; private set; } = new(0); // 成長段階（0: 幼年, 1: 青年, 2: 成人）
+    
+    private CompositeDisposable disposables = new CompositeDisposable();
     public void Spawn(Vector3 position, int health, EntityType type)
     {
         Type = type;
@@ -13,7 +20,31 @@ public abstract class Entity : MonoBehaviour
         Position = position;
         transform.position = position;
         IsActive = true;
+        
+        Bind();
+        
+        if (type == EntityType.Manuchan)
+        {
+            GrowthStage.Value = 0; // 幼年スタート
+            ManuChanGrowthRate.Value = 0.1f; // 初期成長率
+        }
     }
+
+    private void Bind()
+    {
+        ManuChanGrowthRate.Subscribe(rate =>
+        {
+            GrowthStage.Value = rate < 0.3f ? 0 : rate < 0.7f ? 1 : 2; // 成長率に応じて成長段階を更新
+        })
+            .AddTo(disposables);
+        GrowthStage.Subscribe(stage =>
+            {
+                GrowUpEntity(stage);
+            })
+            .AddTo(disposables);
+    }
+
+    public abstract void GrowUpEntity(int stage);
 
     protected void ReturnToPool()
     {
@@ -21,18 +52,19 @@ public abstract class Entity : MonoBehaviour
     }
 
     public abstract void Move(Vector3 target);
-    public abstract void TakeDamage(int damage);
 
     public void Die()
     {
         Debug.Log($"{Type} has died.");
         IsActive = false;
+        disposables.Clear();
         ReturnToPool();
     }
 }
 
 public enum EntityType
 {
+    Manuchan,
     People,
     Enemy
 }

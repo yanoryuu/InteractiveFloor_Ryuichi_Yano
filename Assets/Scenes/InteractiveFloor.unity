@@ -164,6 +164,43 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!84 &696923446
+RenderTexture:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  m_ImageContentsHash:
+    serializedVersion: 2
+    Hash: 00000000000000000000000000000000
+  m_IsAlphaChannelOptional: 0
+  serializedVersion: 6
+  m_Width: 1280
+  m_Height: 1280
+  m_AntiAliasing: 1
+  m_MipCount: -1
+  m_DepthStencilFormat: 92
+  m_ColorFormat: 8
+  m_MipMap: 0
+  m_GenerateMips: 1
+  m_SRGB: 0
+  m_UseDynamicScale: 0
+  m_UseDynamicScaleExplicit: 0
+  m_BindMS: 0
+  m_EnableCompatibleFormat: 1
+  m_EnableRandomWrite: 0
+  m_TextureSettings:
+    serializedVersion: 2
+    m_FilterMode: 1
+    m_Aniso: 1
+    m_MipBias: 0
+    m_WrapU: 1
+    m_WrapV: 1
+    m_WrapW: 1
+  m_Dimension: 2
+  m_VolumeDepth: 1
+  m_ShadowSamplingMode: 2
 --- !u!1 &1264840403
 GameObject:
   m_ObjectHideFlags: 0
@@ -195,10 +232,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EntityManager
   poolConfigs:
   - type: 0
-    prefab: {fileID: 3066402503644228112, guid: c7b54dbb311464c3d93b2624d23389b6, type: 3}
+    prefab: {fileID: 0}
     initialSize: 2
   - type: 1
-    prefab: {fileID: 1337426568950945422, guid: 7578b2acc004649d981d2caa3bf6681b, type: 3}
+    prefab: {fileID: 0}
     initialSize: 1
 --- !u!4 &1264840405
 Transform:
@@ -294,43 +331,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!84 &1706686682
-RenderTexture:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: 
-  m_ImageContentsHash:
-    serializedVersion: 2
-    Hash: 00000000000000000000000000000000
-  m_IsAlphaChannelOptional: 0
-  serializedVersion: 6
-  m_Width: 1280
-  m_Height: 1280
-  m_AntiAliasing: 1
-  m_MipCount: -1
-  m_DepthStencilFormat: 92
-  m_ColorFormat: 8
-  m_MipMap: 0
-  m_GenerateMips: 1
-  m_SRGB: 0
-  m_UseDynamicScale: 0
-  m_UseDynamicScaleExplicit: 0
-  m_BindMS: 0
-  m_EnableCompatibleFormat: 1
-  m_EnableRandomWrite: 0
-  m_TextureSettings:
-    serializedVersion: 2
-    m_FilterMode: 1
-    m_Aniso: 1
-    m_MipBias: 0
-    m_WrapU: 1
-    m_WrapV: 1
-    m_WrapW: 1
-  m_Dimension: 2
-  m_VolumeDepth: 1
-  m_ShadowSamplingMode: 2
 --- !u!114 &1757427070 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7517880678709741601, guid: d5bff10ff706fed418937ef2ca81feaa, type: 3}
@@ -365,7 +365,7 @@ PrefabInstance:
     - target: {fileID: 4910188453780198564, guid: d5bff10ff706fed418937ef2ca81feaa, type: 3}
       propertyPath: m_TargetTexture
       value: 
-      objectReference: {fileID: 1706686682}
+      objectReference: {fileID: 696923446}
     - target: {fileID: 6297605576093970500, guid: d5bff10ff706fed418937ef2ca81feaa, type: 3}
       propertyPath: m_LocalPosition.x
       value: 2.64385
@@ -406,6 +406,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7348436019067401109, guid: d5bff10ff706fed418937ef2ca81feaa, type: 3}
+      propertyPath: _keepAlpha
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7348436019067401109, guid: d5bff10ff706fed418937ef2ca81feaa, type: 3}
+      propertyPath: _sourceTexture
+      value: 
+      objectReference: {fileID: 696923446}
     - target: {fileID: 7517880678709741601, guid: d5bff10ff706fed418937ef2ca81feaa, type: 3}
       propertyPath: _debugRectMaterial
       value: 

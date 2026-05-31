@@ -8,7 +8,7 @@ namespace InteractiveFloor.Detect
 {
     public class DetectViewerManager
     {
-        private const float MatchingThreshold = Consts.MatchingThreshold;
+        private const float MatchingThreshold = InteractiveFloorConsts.MatchingThreshold;
 
         private int _nextLabelIndex = 1;
         private readonly List<TrackedSensorSnapshot> _previousSensors = new();

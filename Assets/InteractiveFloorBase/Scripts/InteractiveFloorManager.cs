@@ -216,6 +216,7 @@ namespace InteractiveFloor
         {
             if (_spoutSenderRef != null)
             {
+#if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
                 if (EnableSpout)
                 {
                     _spoutSenderRef.gameObject.SetActive(true);
@@ -227,14 +228,23 @@ namespace InteractiveFloor
                     _spoutSenderRef.gameObject.SetActive(false);
                     _spoutSenderRef.enabled = false;
                 }
+#else
+                // SpoutはWindows専用のためmacOS/Linux環境では無効化する
+                _spoutSenderRef.gameObject.SetActive(false);
+                _spoutSenderRef.enabled = false;
+#endif
             }
 
             if (_dummyCameraRef != null)
             {
+#if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
                 if (EnableSpout)
                     _dummyCameraRef.gameObject.SetActive(true);
                 else
                     _dummyCameraRef.gameObject.SetActive(false);
+#else
+                _dummyCameraRef.gameObject.SetActive(false);
+#endif
             }
         }
 
