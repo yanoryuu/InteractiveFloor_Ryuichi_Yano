@@ -29,6 +29,7 @@ public class InteractivePresenter : ITickable ,IStartable ,IDisposable
     {
         var viewers = _detectViewerManager.GetViewer(_sensorObjectManager.SensorList);
         _view.SyncEntities(viewers);
+        _entityManager.ProcessContacts();
     }
     
     public void Dispose()

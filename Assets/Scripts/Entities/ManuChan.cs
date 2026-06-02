@@ -6,10 +6,11 @@ public class ManuChan : Entity
     public override void Move(Vector3 target)
     {
         transform.position = Vector3.Lerp(
-            transform.position,  // 現在地
-            target,     // 目標地
+            transform.position,  
+            target,     
             0.5f * Time.deltaTime
         );
+        Position = transform.position;
     }
     
     public override void GrowUpEntity(int stage){
@@ -30,14 +31,20 @@ public class ManuChan : Entity
         }
     }
     
-    public void MatchOtherManuChan(ManuChan other)
+    public override void OnContactEnter(Entity other)
     {
-        float distance = Vector3.Distance(this.Position, other.Position);
-        if (distance < InteractiveFloorConsts.ManuChanMatchingDistance)
+        if (other == null || other == this)
         {
-            // 成長率を上げる
-            this.ManuChanGrowthRate.Value += 0.05f;
-            other.ManuChanGrowthRate.Value += 0.05f;
+            return;
         }
+
+        if (other.Type != EntityType.Manuchan)
+        {
+            return;
+        }
+
+        GrowthRate.Value = Mathf.Clamp01(
+            GrowthRate.Value + InteractiveFloorConsts.ManuChanGrowthRateIncrease
+        );
     }
 }
