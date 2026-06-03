@@ -6,39 +6,21 @@ using UnityEngine;
 public class EntitySpawnSettings : ScriptableObject
 {
     [Serializable]
-    public class EntityLevelConfig
-    {
-        public int level;
-        public Entity prefab;
-        public int initialSize = 10;
-        public Vector3 localScale = Vector3.one;
-    }
-
-    [Serializable]
     public class EntityTypeConfig
     {
         public EntityType type;
-        public List<EntityLevelConfig> levels = new();
+        public Entity prefab;
+        public int initialSize = 10;
+        public Vector3 localScale = Vector3.one;
     }
 
     [SerializeField] private List<EntityTypeConfig> entities = new();
 
     public IEnumerable<EntityTypeConfig> Entities => entities;
 
-    public bool TryGetLevelConfig(EntityType type, int level, out EntityLevelConfig config)
+    public bool TryGetConfig(EntityType type, out EntityTypeConfig config)
     {
-        config = null;
-
-        var typeConfig = entities.Find(entry => entry.type == type);
-        if (typeConfig == null || typeConfig.levels == null || typeConfig.levels.Count == 0)
-        {
-            return false;
-        }
-
-        config = typeConfig.levels.Find(entry => entry.level == level)
-                 ?? typeConfig.levels.Find(entry => entry.level == 0)
-                 ?? typeConfig.levels[0];
-
+        config = entities.Find(e => e.type == type);
         return config != null && config.prefab != null;
     }
 }

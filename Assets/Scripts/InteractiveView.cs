@@ -10,9 +10,7 @@ public class InteractiveView : MonoBehaviour
     private void Awake()
     {
         if (_entityManager == null)
-        {
             _entityManager = FindObjectOfType<EntityManager>();
-        }
     }
 
     private readonly Dictionary<string, Entity> _activeEntities = new();
@@ -27,16 +25,11 @@ public class InteractiveView : MonoBehaviour
 
             if (!_activeEntities.TryGetValue(viewer.Label, out var entity) || entity == null)
             {
-                Debug.Log("Spawning new entity for viewer: " + viewer.Label);
-                entity = SpawnEntity(viewer);
-                if (entity == null)
-                {
-                    continue;
-                }
-
+                entity = _entityManager.GetEntity<Entity>(EntityType.Manuchan, viewer.Position, 100);
+                if (entity == null) continue;
                 _activeEntities[viewer.Label] = entity;
             }
-            
+
             entity.Move(viewer.Position);
         }
 
@@ -45,23 +38,12 @@ public class InteractiveView : MonoBehaviour
         {
             if (!seenLabels.Contains(pair.Key))
             {
-                if (pair.Value != null)
-                {
-                    pair.Value.Die();
-                }
+                pair.Value?.Die();
                 labelsToRemove.Add(pair.Key);
             }
         }
 
         foreach (var label in labelsToRemove)
-        {
             _activeEntities.Remove(label);
-        }
-    }
-
-    private Entity SpawnEntity(Viewer viewer)
-    {
-        const int defaultLevel = 0;
-        return _entityManager.GetEntity<Entity>(EntityType.Manuchan, viewer.Position, 100, defaultLevel);
     }
 }

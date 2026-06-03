@@ -388,7 +388,7 @@ GameObject:
   - component: {fileID: 1179883344591762277}
   - component: {fileID: 7815058706491794067}
   m_Layer: 0
-  m_Name: ManuchanLv1
+  m_Name: ManuchanLv1Model
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -402,7 +402,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4283962671714310463}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.7071069, y: 0, z: -0, w: 0.7071067}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 4.53904, y: 21.17024, z: -42.49395}
   m_LocalScale: {x: 0.19999999, y: 0.19999999, z: 0.19999999}
   m_ConstrainProportionsScale: 1
@@ -449,6 +449,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb87c6862f7b4457d86604c3b1158842, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ManuChan
+  _stageModels:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
 --- !u!1 &4786847951467372888
 GameObject:
   m_ObjectHideFlags: 0
