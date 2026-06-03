@@ -11,6 +11,7 @@ public class EntitySpawnSettings : ScriptableObject
         public int level;
         public Entity prefab;
         public int initialSize = 10;
+        public Vector3 localScale = Vector3.one;
     }
 
     [Serializable]

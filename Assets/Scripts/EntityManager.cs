@@ -5,20 +5,24 @@ using UnityEngine;
 public class EntityManager : MonoBehaviour
 {
     public static EntityManager Instance { get; private set; }
+    [SerializeField] private EntitySpawnSettings entitySpawnSettings;
 
-    [System.Serializable]
-    public class EntityPoolConfig
-    {
-        public EntityType type;
-        public Entity prefab;
-        public int initialSize = 10;
-    }
-
-    [SerializeField] private List<EntityPoolConfig> poolConfigs;
-
-    private readonly Dictionary<EntityType, Queue<Entity>> pools = new();
-    private readonly Dictionary<EntityType, Entity> prefabs = new();
+    private readonly Dictionary<EntityPoolKey, Queue<Entity>> pools = new();
+    private readonly Dictionary<EntityPoolKey, Entity> prefabs = new();
+    private readonly Dictionary<EntityPoolKey, Vector3> spawnLocalScales = new();
     private readonly HashSet<Entity> activeEntities = new();
+
+    private readonly struct EntityPoolKey
+    {
+        public EntityPoolKey(EntityType type, int level)
+        {
+            Type = type;
+            Level = level;
+        }
+
+        public EntityType Type { get; }
+        public int Level { get; }
+    }
 
     private void Awake()
     {
@@ -29,36 +33,79 @@ public class EntityManager : MonoBehaviour
         }
         Instance = this;
 
-        foreach (var config in poolConfigs)
+        if (entitySpawnSettings == null)
         {
-            prefabs[config.type] = config.prefab;
-            pools[config.type] = new Queue<Entity>();
+            Debug.LogError("EntitySpawnSettings is not assigned.");
+            return;
+        }
 
-            for (int i = 0; i < config.initialSize; i++)
+        foreach (var typeConfig in entitySpawnSettings.Entities)
+        {
+            if (typeConfig.levels == null)
             {
-                var entity = InstantiateEntity(config.type);
-                entity.gameObject.SetActive(false);
-                pools[config.type].Enqueue(entity);
+                continue;
+            }
+
+            foreach (var levelConfig in typeConfig.levels)
+            {
+                if (levelConfig.prefab == null)
+                {
+                    continue;
+                }
+
+                var key = new EntityPoolKey(typeConfig.type, levelConfig.level);
+                prefabs[key] = levelConfig.prefab;
+                spawnLocalScales[key] = levelConfig.localScale;
+                pools[key] = new Queue<Entity>();
+
+                for (int i = 0; i < levelConfig.initialSize; i++)
+                {
+                    var entity = InstantiateEntity(key);
+                    if (entity == null)
+                    {
+                        continue;
+                    }
+
+                    entity.gameObject.SetActive(false);
+                    pools[key].Enqueue(entity);
+                }
             }
         }
     }
 
-    private Entity InstantiateEntity(EntityType type)
+    private Entity InstantiateEntity(EntityPoolKey key)
     {
-        return Instantiate(prefabs[type], transform);
+        var entityObject = Instantiate(prefabs[key].gameObject, transform, false);
+        entityObject.SetActive(false);
+        entityObject.transform.localScale = spawnLocalScales[key];
+
+        var entity = entityObject.GetComponent<Entity>();
+        if (entity == null)
+        {
+            Debug.LogError($"Prefab for EntityType: {key.Type}, Level: {key.Level} does not have an Entity component on its root.");
+        }
+
+        return entity;
     }
 
-    public T GetEntity<T>(EntityType type, Vector3 position, int health) where T : Entity
+    public T GetEntity<T>(EntityType type, Vector3 position, int health, int level = 0) where T : Entity
     {
-        if (!pools.TryGetValue(type, out var pool))
+        if (!TryResolvePoolKey(type, level, out var poolKey))
         {
-            Debug.LogError($"No pool configured for EntityType: {type}");
+            Debug.LogError($"No pool configured for EntityType: {type}, Level: {level}");
             return null;
         }
 
-        var entity = pool.Count > 0 ? pool.Dequeue() : InstantiateEntity(type);
+        var pool = pools[poolKey];
+        var entity = pool.Count > 0 ? pool.Dequeue() : InstantiateEntity(poolKey);
+        if (entity == null)
+        {
+            return null;
+        }
+
+        var spawnLocalScale = spawnLocalScales[poolKey];
+        entity.Spawn(position, health, type, poolKey.Level, spawnLocalScale);
         entity.gameObject.SetActive(true);
-        entity.Spawn(position, health, type);
         activeEntities.Add(entity);
         return entity as T;
     }
@@ -68,7 +115,8 @@ public class EntityManager : MonoBehaviour
         ReleaseContacts(entity);
         activeEntities.Remove(entity);
         entity.gameObject.SetActive(false);
-        if (pools.TryGetValue(entity.Type, out var pool))
+        var key = new EntityPoolKey(entity.Type, entity.Level);
+        if (pools.TryGetValue(key, out var pool))
             pool.Enqueue(entity);
         else
             Destroy(entity.gameObject);
@@ -144,4 +192,22 @@ public class EntityManager : MonoBehaviour
             entity.OnContactExit(other);
         }
     }
+
+    private bool TryResolvePoolKey(EntityType type, int level, out EntityPoolKey key)
+    {
+        key = new EntityPoolKey(type, level);
+        if (pools.ContainsKey(key))
+        {
+            return true;
+        }
+
+        if (entitySpawnSettings != null && entitySpawnSettings.TryGetLevelConfig(type, level, out var config))
+        {
+            key = new EntityPoolKey(type, config.level);
+            return pools.ContainsKey(key);
+        }
+
+        return false;
+    }
+
 }

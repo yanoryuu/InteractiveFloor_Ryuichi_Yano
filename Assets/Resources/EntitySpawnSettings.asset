@@ -16,11 +16,14 @@ MonoBehaviour:
   - type: 0
     levels:
     - level: 0
-      prefab: {fileID: 4621219043830050622, guid: 281ccf580beed444ebf881f4e69aea12, type: 3}
+      prefab: {fileID: 7815058706491794067, guid: 90eb28b35217a1d4cb31952f33cb704f, type: 3}
       initialSize: 1
+      localScale: {x: 0.2, y: 0.2, z: 0.2}
     - level: 1
-      prefab: {fileID: 4621219043830050622, guid: 281ccf580beed444ebf881f4e69aea12, type: 3}
+      prefab: {fileID: 593930467746430919, guid: 281ccf580beed444ebf881f4e69aea12, type: 3}
       initialSize: 1
+      localScale: {x: 0.2, y: 0.2, z: 0.2}
     - level: 2
-      prefab: {fileID: 4621219043830050622, guid: 281ccf580beed444ebf881f4e69aea12, type: 3}
+      prefab: {fileID: 593930467746430919, guid: 281ccf580beed444ebf881f4e69aea12, type: 3}
       initialSize: 1
+      localScale: {x: 0.2, y: 0.2, z: 0.2}

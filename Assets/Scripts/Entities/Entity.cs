@@ -5,6 +5,7 @@ using UnityEngine;
 public abstract class Entity : MonoBehaviour
 {
     public EntityType Type { get; set; }
+    public int Level { get; private set; }
     public Vector3 Position { get; set; }
     public int Health { get; set; }
     public bool IsActive { get; private set; }
@@ -16,12 +17,18 @@ public abstract class Entity : MonoBehaviour
     public ReactiveProperty<int> GrowthStage { get; private set; } = new(0); // 成長段階（0: 幼年, 1: 青年, 2: 成人）
     
     private CompositeDisposable disposables = new CompositeDisposable();
-    public void Spawn(Vector3 position, int health, EntityType type)
+
+    public void Spawn(Vector3 position, int health, EntityType type, int level = 0, Vector3? localScale = null)
     {
         Type = type;
+        Level = level;
         Health = health;
         Position = position;
         transform.position = position;
+        if (localScale.HasValue)
+        {
+            transform.localScale = localScale.Value;
+        }
         IsActive = true;
         IsMetEntities.Clear();
         
