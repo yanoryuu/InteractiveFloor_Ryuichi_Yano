@@ -38,7 +38,7 @@ public class ManuChan : Entity
                 Mathf.Abs(Mathf.DeltaAngle(_currentYaw, targetYaw)) > InteractiveFloorConsts.ManuChanRotatingMoveSlowdownAngleThreshold;
 
             _currentYaw = Mathf.MoveTowardsAngle(_currentYaw, targetYaw, InteractiveFloorConsts.EntityRotationSpeed * Time.deltaTime);
-            transform.rotation = Quaternion.AngleAxis(_currentYaw, Vector3.up) * Quaternion.AngleAxis(35f, Vector3.right);
+            transform.rotation = Quaternion.AngleAxis(_currentYaw, Vector3.up) * Quaternion.AngleAxis(-35f, Vector3.right);
 
             var moveSpeed = InteractiveFloorConsts.EntityMoveSpeed;
             if (isRotatingSlowdown) moveSpeed *= InteractiveFloorConsts.ManuChanRotatingMoveSpeedMultiplier;
