@@ -18,15 +18,18 @@ public class ManuChan : Entity
         GrowUpEntity(GrowthStage.Value);
     }
 
+    // FlockController が毎フレーム設定する
+    public int ViewerCount { get; set; } = 0;
+
     public override void Move(Vector3 target)
     {
-        var isFleeing = EntityManager.Instance != null &&
-                        EntityManager.Instance.ActiveEntityCount >= InteractiveFloorConsts.ManuChanFleeViewerCountThreshold;
+        // FlockController が target を方向込みで計算済みなので方向反転は行わない
+        var isFleeing = ViewerCount >= InteractiveFloorConsts.ManuChanFleeViewerCountThreshold;
 
         var toTarget = target - transform.position;
         toTarget.y = 0f;
 
-        var moveDirection = isFleeing ? -toTarget : toTarget;
+        var moveDirection = toTarget;
         var prevPosition = transform.position;
 
         if (moveDirection.sqrMagnitude > Mathf.Epsilon)
@@ -43,12 +46,13 @@ public class ManuChan : Entity
             var moveSpeed = InteractiveFloorConsts.EntityMoveSpeed;
             if (isRotatingSlowdown) moveSpeed *= InteractiveFloorConsts.ManuChanRotatingMoveSpeedMultiplier;
 
-            var shouldMove = isFleeing || toTarget.magnitude > InteractiveFloorConsts.EntityViewerStopDistance;
+            var keepDist = InteractiveFloorConsts.ManuChanChaseKeepDistance;
+            var shouldMove = isFleeing || toTarget.magnitude > keepDist;
             if (shouldMove)
             {
                 var destination = isFleeing
                     ? transform.position + moveDirection.normalized * 100f
-                    : target - toTarget.normalized * InteractiveFloorConsts.EntityViewerStopDistance;
+                    : target - toTarget.normalized * keepDist;
 
                 transform.position = Vector3.MoveTowards(transform.position, destination, moveSpeed * Time.deltaTime);
                 GrowthRate.Value = Mathf.Clamp01(GrowthRate.Value + InteractiveFloorConsts.ManuChanWalkingGrowthRate * Time.deltaTime);
