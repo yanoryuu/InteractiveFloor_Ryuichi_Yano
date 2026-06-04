@@ -236,7 +236,7 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8109e9e16ba4cc04b8e0928aea897927, type: 3}
---- !u!84 &312815314
+--- !u!84 &512006673
 RenderTexture:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -6177,7 +6177,7 @@ PrefabInstance:
     - target: {fileID: 4910188453780198564, guid: d5bff10ff706fed418937ef2ca81feaa, type: 3}
       propertyPath: m_TargetTexture
       value: 
-      objectReference: {fileID: 312815314}
+      objectReference: {fileID: 512006673}
     - target: {fileID: 6297605576093970500, guid: d5bff10ff706fed418937ef2ca81feaa, type: 3}
       propertyPath: m_LocalPosition.x
       value: 2.64385
@@ -6439,6 +6439,7 @@ MonoBehaviour:
   _sensorObjectManager: {fileID: 1757427070}
   _interactiveView: {fileID: 156782425}
   _flockController: {fileID: 0}
+  _lightManager: {fileID: 0}
 --- !u!4 &2143405199
 Transform:
   m_ObjectHideFlags: 0
