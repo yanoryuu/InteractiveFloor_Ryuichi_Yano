@@ -223,6 +223,46 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8109e9e16ba4cc04b8e0928aea897927, type: 3}
+<<<<<<< HEAD
+=======
+--- !u!84 &512006673
+RenderTexture:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  m_ImageContentsHash:
+    serializedVersion: 2
+    Hash: 00000000000000000000000000000000
+  m_IsAlphaChannelOptional: 0
+  serializedVersion: 6
+  m_Width: 1280
+  m_Height: 1280
+  m_AntiAliasing: 1
+  m_MipCount: -1
+  m_DepthStencilFormat: 92
+  m_ColorFormat: 8
+  m_MipMap: 0
+  m_GenerateMips: 1
+  m_SRGB: 0
+  m_UseDynamicScale: 0
+  m_UseDynamicScaleExplicit: 0
+  m_BindMS: 0
+  m_EnableCompatibleFormat: 1
+  m_EnableRandomWrite: 0
+  m_TextureSettings:
+    serializedVersion: 2
+    m_FilterMode: 1
+    m_Aniso: 1
+    m_MipBias: 0
+    m_WrapU: 1
+    m_WrapV: 1
+    m_WrapW: 1
+  m_Dimension: 2
+  m_VolumeDepth: 1
+  m_ShadowSamplingMode: 2
+>>>>>>> 273e69e1dce676b936804a6e8728405700148599
 --- !u!1001 &572511924
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6211,7 +6251,11 @@ PrefabInstance:
     - target: {fileID: 4910188453780198564, guid: d5bff10ff706fed418937ef2ca81feaa, type: 3}
       propertyPath: m_TargetTexture
       value: 
+<<<<<<< HEAD
       objectReference: {fileID: 804446751}
+=======
+      objectReference: {fileID: 512006673}
+>>>>>>> 273e69e1dce676b936804a6e8728405700148599
     - target: {fileID: 6297605576093970500, guid: d5bff10ff706fed418937ef2ca81feaa, type: 3}
       propertyPath: m_LocalPosition.x
       value: 2.64385
@@ -6471,8 +6515,14 @@ MonoBehaviour:
   autoInjectGameObjects: []
   _entityManager: {fileID: 1264840404}
   _sensorObjectManager: {fileID: 1757427070}
+<<<<<<< HEAD
   _flockController: {fileID: 1537459174}
   _lightManager: {fileID: 661374298}
+=======
+  _interactiveView: {fileID: 156782425}
+  _flockController: {fileID: 0}
+  _lightManager: {fileID: 0}
+>>>>>>> 273e69e1dce676b936804a6e8728405700148599
 --- !u!4 &2143405199
 Transform:
   m_ObjectHideFlags: 0
