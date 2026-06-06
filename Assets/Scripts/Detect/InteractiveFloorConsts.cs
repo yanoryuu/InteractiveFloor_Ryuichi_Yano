@@ -11,10 +11,10 @@ namespace InteractiveFloor.Detect
         public const float ManuChanRotatingMoveSpeedMultiplier = 0.35f;
         public const float EntityViewerStopDistance = 1f;
         public const float EntityContactDistance = 0.5f;
-        public const float ManuChanGrowthRateIncrease = 0.05f;
+        public const float ManuChanGrowthRateIncrease = 0.005f;
         public const float ManuChanMatchingDistance = 0.5f;
-        public const float ManuChanWalkingGrowthRate = 0.02f;
-        public const float ManuChanContactStayGrowthRate = 0.05f;
+        public const float ManuChanWalkingGrowthRate = 0.001f;
+        public const float ManuChanContactStayGrowthRate = 0.002f;
         public const int ManuChanFleeViewerCountThreshold = 4;
 
         // マップ範囲
@@ -23,13 +23,13 @@ namespace InteractiveFloor.Detect
 
         // 群れ(Boids)システム
         public const int ManuChanMaxCount = 20;
-        public const float ManuChanFlockPerceptionRadius = 1f;
-        public const float ManuChanSeparationRadius = 1f;
-        public const float ManuChanSeparationWeight = 1.5f;
+        public const float ManuChanFlockPerceptionRadius = 1.5f;
+        public const float ManuChanSeparationRadius = 0.6f;
+        public const float ManuChanSeparationWeight = 1.3f;
         public const float ManuChanAlignmentWeight = 1f;
         public const float ManuChanCohesionWeight = 0.8f;
-        public const float ManuChanBoundaryWeight = 2f;
-        public const float ManuChanBoundaryMargin = 0.8f;
+        public const float ManuChanBoundaryWeight = 1.4f;
+        public const float ManuChanBoundaryMargin = 0.5f;
         public const float ManuChanWanderAngleRate = 60f;
         public const float ManuChanPlayerDetectRadius = 1f;
         public const float ManuChanChaseKeepDistance = 0.3f;
