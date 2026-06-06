@@ -45,6 +45,8 @@ namespace InteractiveFloor.Editor
         private float manuChanWanderAngleRate;
         private float manuChanPlayerDetectRadius;
         private float manuChanChaseKeepDistance;
+        private int manuChanBoidsUpdateInterval;
+        private float manuChanMinEntityDistance;
 
         private Vector2 _scrollPos;
 
@@ -104,6 +106,8 @@ namespace InteractiveFloor.Editor
             manuChanWanderAngleRate = EditorGUILayout.FloatField("徘徊角速度(度/秒)", manuChanWanderAngleRate);
             manuChanPlayerDetectRadius = EditorGUILayout.FloatField("プレイヤー検出半径", manuChanPlayerDetectRadius);
             manuChanChaseKeepDistance = EditorGUILayout.FloatField("プレイヤー停止距離", manuChanChaseKeepDistance);
+            manuChanBoidsUpdateInterval = EditorGUILayout.IntField("Boids更新間隔(フレーム)", manuChanBoidsUpdateInterval);
+            manuChanMinEntityDistance = EditorGUILayout.FloatField("エンティティ最小距離", manuChanMinEntityDistance);
 
             EditorGUILayout.EndScrollView();
 
@@ -155,6 +159,8 @@ namespace InteractiveFloor.Editor
             manuChanWanderAngleRate = ParseFloat(text, "ManuChanWanderAngleRate");
             manuChanPlayerDetectRadius = ParseFloat(text, "ManuChanPlayerDetectRadius");
             manuChanChaseKeepDistance = ParseFloat(text, "ManuChanChaseKeepDistance");
+            manuChanBoidsUpdateInterval = ParseInt(text, "ManuChanBoidsUpdateInterval");
+            manuChanMinEntityDistance = ParseFloat(text, "ManuChanMinEntityDistance");
 
             Repaint();
         }
@@ -197,6 +203,8 @@ namespace InteractiveFloor.Editor
             text = ReplaceFloat(text, "ManuChanWanderAngleRate", manuChanWanderAngleRate);
             text = ReplaceFloat(text, "ManuChanPlayerDetectRadius", manuChanPlayerDetectRadius);
             text = ReplaceFloat(text, "ManuChanChaseKeepDistance", manuChanChaseKeepDistance);
+            text = ReplaceInt(text, "ManuChanBoidsUpdateInterval", manuChanBoidsUpdateInterval);
+            text = ReplaceFloat(text, "ManuChanMinEntityDistance", manuChanMinEntityDistance);
 
             File.WriteAllText(fullPath, text);
             AssetDatabase.ImportAsset(ConstsFilePath);

@@ -386,7 +386,6 @@ GameObject:
   m_Component:
   - component: {fileID: 8328834871733632466}
   - component: {fileID: 1179883344591762277}
-  - component: {fileID: 7815058706491794067}
   m_Layer: 0
   m_Name: ManuchanLv1Model
   m_TagString: Untagged
@@ -437,22 +436,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &7815058706491794067
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4283962671714310463}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cb87c6862f7b4457d86604c3b1158842, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ManuChan
-  _stageModels:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
 --- !u!1 &4786847951467372888
 GameObject:
   m_ObjectHideFlags: 0

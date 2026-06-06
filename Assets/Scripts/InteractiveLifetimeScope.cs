@@ -8,12 +8,12 @@ public class InteractiveLifetimeScope : LifetimeScope
 {
     [SerializeField] private EntityManager _entityManager;
     [SerializeField] private SensorObjectManager _sensorObjectManager;
-    [SerializeField] private InteractiveView _interactiveView;
     [SerializeField] private ManuChanFlockController _flockController;
     [SerializeField] private LightManager _lightManager;
     protected override void Configure(IContainerBuilder builder)
     {
-        builder.RegisterComponent(_interactiveView);
+        // InteractiveView はMonoBehaviour不要なので純粋C#クラスとして登録
+        builder.Register<InteractiveView>(Lifetime.Scoped);
         builder.RegisterComponent(_entityManager);
         builder.RegisterComponent(_sensorObjectManager);
         builder.RegisterComponent(_flockController);

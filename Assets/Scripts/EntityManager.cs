@@ -5,14 +5,18 @@ using UnityEngine;
 public class EntityManager : MonoBehaviour
 {
     public static EntityManager Instance { get; private set; }
-    public int ActiveEntityCount => activeEntities.Count;
+    public int ActiveEntityCount => _activeEntitiesList.Count;
 
     [SerializeField] private EntitySpawnSettings entitySpawnSettings;
 
     private readonly Dictionary<EntityType, Queue<Entity>> pools = new();
     private readonly Dictionary<EntityType, Entity> prefabs = new();
     private readonly Dictionary<EntityType, Vector3> spawnLocalScales = new();
+
+    // HashSet: O(1) の Contains/Remove に使用
+    // List: ProcessContacts での O(N²) イテレーションにアロケーションなしで使用
     private readonly HashSet<Entity> activeEntities = new();
+    private readonly List<Entity> _activeEntitiesList = new();
 
     private void Awake()
     {
@@ -76,6 +80,7 @@ public class EntityManager : MonoBehaviour
         entity.Spawn(position, health, type, spawnLocalScales[type]);
         entity.gameObject.SetActive(true);
         activeEntities.Add(entity);
+        _activeEntitiesList.Add(entity);
         return entity as T;
     }
 
@@ -83,6 +88,7 @@ public class EntityManager : MonoBehaviour
     {
         ReleaseContacts(entity);
         activeEntities.Remove(entity);
+        _activeEntitiesList.Remove(entity);
         entity.gameObject.SetActive(false);
 
         if (pools.TryGetValue(entity.Type, out var pool))
@@ -91,22 +97,21 @@ public class EntityManager : MonoBehaviour
             Destroy(entity.gameObject);
     }
 
+    /// <summary>毎フレーム呼ぶ。アロケーションなしで接触判定を処理する。</summary>
     public void ProcessContacts()
     {
-        var entities = new List<Entity>(activeEntities);
-
-        for (var leftIndex = 0; leftIndex < entities.Count; leftIndex++)
+        for (var leftIndex = 0; leftIndex < _activeEntitiesList.Count; leftIndex++)
         {
-            var left = entities[leftIndex];
+            var left = _activeEntitiesList[leftIndex];
             if (left == null || !left.gameObject.activeInHierarchy) continue;
 
-            for (var rightIndex = leftIndex + 1; rightIndex < entities.Count; rightIndex++)
+            for (var rightIndex = leftIndex + 1; rightIndex < _activeEntitiesList.Count; rightIndex++)
             {
-                var right = entities[rightIndex];
+                var right = _activeEntitiesList[rightIndex];
                 if (right == null || !right.gameObject.activeInHierarchy) continue;
 
                 var isContacting = IsContacting(left, right);
-                var isAlreadyContacting = left.IsMetEntities.Contains(right) && right.IsMetEntities.Contains(left);
+                var isAlreadyContacting = left.IsMetEntities.Contains(right);
 
                 if (isContacting)
                 {
@@ -123,7 +128,7 @@ public class EntityManager : MonoBehaviour
                         right.OnContactStay(left);
                     }
                 }
-                else if (isAlreadyContacting || left.IsMetEntities.Contains(right) || right.IsMetEntities.Contains(left))
+                else if (isAlreadyContacting || right.IsMetEntities.Contains(left))
                 {
                     left.IsMetEntities.Remove(right);
                     right.IsMetEntities.Remove(left);
@@ -134,14 +139,15 @@ public class EntityManager : MonoBehaviour
         }
     }
 
-    private bool IsContacting(Entity left, Entity right)
+    private static bool IsContacting(Entity left, Entity right)
     {
-        return Vector3.Distance(left.transform.position, right.transform.position)
-               <= InteractiveFloorConsts.EntityContactDistance;
+        return (left.transform.position - right.transform.position).sqrMagnitude
+               <= InteractiveFloorConsts.EntityContactDistance * InteractiveFloorConsts.EntityContactDistance;
     }
 
     private void ReleaseContacts(Entity entity)
     {
+        // IsMetEntities をコピーしてから操作（ループ中の変更を避けるため）
         var metEntities = new List<Entity>(entity.IsMetEntities);
         foreach (var other in metEntities)
         {
