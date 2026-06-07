@@ -26,9 +26,9 @@ namespace InteractiveFloor.Detect
         public const float ManuChanFlockPerceptionRadius = 1.5f;
         public const float ManuChanSeparationRadius = 0.6f;
         public const float ManuChanSeparationWeight = 1.3f;
-        public const float ManuChanAlignmentWeight = 1f;
+        public const float ManuChanAlignmentWeight = 0.6f;
         public const float ManuChanCohesionWeight = 0.8f;
-        public const float ManuChanBoundaryWeight = 1.4f;
+        public const float ManuChanBoundaryWeight = 1f;
         public const float ManuChanBoundaryMargin = 0.5f;
         public const float ManuChanWanderAngleRate = 60f;
         public const float ManuChanPlayerDetectRadius = 1f;

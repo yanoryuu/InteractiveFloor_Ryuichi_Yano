@@ -102,6 +102,14 @@ public class ManuChanFlockController : MonoBehaviour
         foreach (var agent in _agents)
         {
             if (agent.Entity == null || !agent.Entity.IsActive) continue;
+
+            // 成人して退場中の個体は専用の処理にまかせる
+            if (agent.Entity.IsLeaving)
+            {
+                UpdateLeavingAgent(agent);
+                continue;
+            }
+
             agent.Entity.ViewerCount = viewerCount;
             var pos = agent.Entity.Position;
 
@@ -158,6 +166,64 @@ public class ManuChanFlockController : MonoBehaviour
         }
 
         ResolveOverlaps();
+    }
+
+    /// <summary>
+    /// 成人して退場中の個体を動かす。境界反発を無視してエリア外まで歩かせ、
+    /// 十分に出たタイミングで Die() を呼ぶ。
+    /// </summary>
+    private void UpdateLeavingAgent(FlockAgent agent)
+    {
+        agent.Entity.ViewerCount = 0; // 逃げフラグを立てない
+
+        var pos = agent.Entity.Position;
+
+        // 現在の速度方向を優先。止まっていたらエリア中心から離れる方向へ
+        var exitDir = agent.Velocity;
+        exitDir.y = 0f;
+        if (exitDir.sqrMagnitude < 0.01f)
+        {
+            exitDir = pos - _areaCenter;
+            exitDir.y = 0f;
+        }
+        exitDir = exitDir.sqrMagnitude > Mathf.Epsilon ? exitDir.normalized : Vector3.forward;
+
+        var speed = InteractiveFloorConsts.EntityMoveSpeed;
+        agent.Velocity = Vector3.Lerp(agent.Velocity, exitDir * speed, 3f * Time.deltaTime);
+        agent.Entity.Move(pos + exitDir * 10f);
+
+        // エリアを1m超えたら消滅 → 新しい個体をリスポーン
+        var local = pos - _areaCenter;
+        if (Mathf.Abs(local.x) > _areaHalfExtents.x + 1f ||
+            Mathf.Abs(local.z) > _areaHalfExtents.y + 1f)
+        {
+            agent.Entity.Die();
+            RespawnAgent(agent);
+        }
+    }
+
+    /// <summary>
+    /// Die() 直後に同じ FlockAgent スロットへ新しい個体を割り当てる。
+    /// プールに戻ったばかりなので GetEntity は必ず成功する。
+    /// </summary>
+    private void RespawnAgent(FlockAgent agent)
+    {
+        var hw = _areaHalfExtents.x * 0.8f;
+        var hd = _areaHalfExtents.y * 0.8f;
+        var pos = new Vector3(
+            _areaCenter.x + Random.Range(-hw, hw),
+            _areaCenter.y,
+            _areaCenter.z + Random.Range(-hd, hd));
+
+        var entity = _entityManager.GetEntity<ManuChan>(EntityType.Manuchan, pos, 100);
+        if (entity == null) return;
+
+        var yaw = Random.Range(0f, 360f);
+        agent.Entity = entity;
+        agent.Velocity = YawToDir(yaw) * InteractiveFloorConsts.EntityMoveSpeed;
+        agent.DesiredVelocity = agent.Velocity;
+        agent.WanderYaw = yaw;
+        agent.IsChasing = false;
     }
 
     /// <summary>

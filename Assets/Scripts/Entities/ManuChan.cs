@@ -15,11 +15,15 @@ public class ManuChan : Entity
     // SetActive(true) のタイミングで確実に正しいモデルを表示する
     private void OnEnable()
     {
+        IsLeaving = false;
         GrowUpEntity(GrowthStage.Value);
     }
 
     // FlockController が毎フレーム設定する
     public int ViewerCount { get; set; } = 0;
+
+    /// <summary>成人後にエリア外へ退場中かどうか。FlockController が参照する。</summary>
+    public bool IsLeaving { get; private set; }
 
     public override void Move(Vector3 target)
     {
@@ -86,6 +90,9 @@ public class ManuChan : Entity
 
         StateMachine?.RefreshAnimator();
         StateMachine?.TriggerGrowUp(stage);
+
+        if (stage >= 2)
+            IsLeaving = true;
     }
 
     public override void OnContactEnter(Entity other)
