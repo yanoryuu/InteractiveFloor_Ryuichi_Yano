@@ -22,6 +22,8 @@ public class ManuChanStateMachine : MonoBehaviour
 
     private Animator _animator;
 
+    public Animator CurrentAnimator => _animator;
+
     // RefreshAnimator 時にキャッシュ。毎フレームのパラメータ存在チェックを避ける。
     private bool _hasSpeed;
     private bool _hasIsFleeing;
@@ -65,12 +67,25 @@ public class ManuChanStateMachine : MonoBehaviour
         if (_hasIsFleeing) _animator.SetBool(HashIsFleeing, isFleeing);
     }
 
-    /// <summary>成長段階が変わったときに呼ぶ。GrowUp トリガーを発火する。</summary>
+    /// <summary>
+    /// 成長段階が上がったときに呼ぶ。GrowUp トリガーを発火する。
+    /// スポーン時の初期設定には <see cref="ApplyGrowthStage"/> を使うこと。
+    /// </summary>
     public void TriggerGrowUp(int stage)
     {
         if (_animator == null) return;
         if (_hasGrowthStage) _animator.SetInteger(HashGrowthStage, stage);
         if (_hasGrowUp)      _animator.SetTrigger(HashGrowUp);
+    }
+
+    /// <summary>
+    /// スポーン・リスポーン時に呼ぶ。GrowthStage 整数パラメータだけ設定し、
+    /// GrowUp トリガーは発火しない。
+    /// </summary>
+    public void ApplyGrowthStage(int stage)
+    {
+        if (_animator == null) return;
+        if (_hasGrowthStage) _animator.SetInteger(HashGrowthStage, stage);
     }
 
     /// <summary>別のマヌちゃんと接触した瞬間に呼ぶ。</summary>

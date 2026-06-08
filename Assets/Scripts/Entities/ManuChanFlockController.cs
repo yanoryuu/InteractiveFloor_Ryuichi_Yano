@@ -23,6 +23,12 @@ public class ManuChanFlockController : MonoBehaviour
         InteractiveFloorConsts.ManuChanMapHalfWidth,
         InteractiveFloorConsts.ManuChanMapHalfDepth);
 
+    [Header("餌(エサ)")]
+    [Tooltip("マップ上に出現する餌のPrefab。Viewerが回収すると、くっついているマヌちゃんが次の段階へ進化する。")]
+    [SerializeField] private GameObject _foodPrefab;
+    [Tooltip("Viewerが餌を回収した瞬間に再生するパーティクル（円形に輪が広がる演出など）。回収位置に生成され、再生後に自動破棄される。")]
+    [SerializeField] private ParticleSystem _foodPickupEffect;
+
     private class FlockAgent
     {
         public ManuChan Entity;
@@ -34,6 +40,7 @@ public class ManuChanFlockController : MonoBehaviour
     }
 
     private readonly List<FlockAgent> _agents = new();
+    private readonly List<GameObject> _foods = new();
     private int _frameIndex;
     private float _boidsDtAccum;
 
@@ -76,6 +83,8 @@ public class ManuChanFlockController : MonoBehaviour
 
     public void UpdateFlock(IReadOnlyList<Vector3> viewerPositions)
     {
+        UpdateFood(viewerPositions);
+
         var viewerCount = viewerPositions.Count;
         var isGlobalFlee = viewerCount >= InteractiveFloorConsts.ManuChanFleeViewerCountThreshold;
 
@@ -103,7 +112,20 @@ public class ManuChanFlockController : MonoBehaviour
         {
             if (agent.Entity == null || !agent.Entity.IsActive) continue;
 
-            // 成人して退場中の個体は専用の処理にまかせる
+            var pos = agent.Entity.Position;
+
+            // 成人個体の退場判定:
+            //   Viewerにくっついている（検出半径内にViewerがいる）間は退場しない。
+            //   Viewerが消えたら退場を開始する。Viewerが戻ってくれば再び追従する。
+            //   全体逃げモード中はViewerが大勢いるので退場せず、逃げ挙動に従う。
+            if (agent.Entity.IsAdult)
+            {
+                var hasNearbyViewer = isGlobalFlee
+                    || TryGetNearestViewer(pos, viewerPositions, detectRadSq, out _);
+                agent.Entity.SetLeaving(!hasNearbyViewer);
+            }
+
+            // 退場中の個体は専用の処理にまかせる
             if (agent.Entity.IsLeaving)
             {
                 UpdateLeavingAgent(agent);
@@ -111,7 +133,6 @@ public class ManuChanFlockController : MonoBehaviour
             }
 
             agent.Entity.ViewerCount = viewerCount;
-            var pos = agent.Entity.Position;
 
             // ---- 行動決定 ----
             if (isGlobalFlee)
@@ -224,6 +245,105 @@ public class ManuChanFlockController : MonoBehaviour
         agent.DesiredVelocity = agent.Velocity;
         agent.WanderYaw = yaw;
         agent.IsChasing = false;
+    }
+
+    // ---- 餌(エサ) ----
+
+    /// <summary>
+    /// 餌をマップ上にランダム出現させ、Viewerによる回収判定を行う。
+    /// 出現範囲・出現確率は InteractiveFloorConsts（定数エディタ）で調整できる。
+    /// </summary>
+    private void UpdateFood(IReadOnlyList<Vector3> viewerPositions)
+    {
+        // ---- 出現 ----
+        // 出現確率は「1秒あたり」の確率として扱い、フレームレート非依存にする。
+        if (_foodPrefab != null
+            && _foods.Count < InteractiveFloorConsts.ManuChanFoodMaxCount
+            && Random.value < InteractiveFloorConsts.ManuChanFoodSpawnProbability * Time.deltaTime)
+        {
+            SpawnFood();
+        }
+
+        // ---- 回収判定 ----
+        if (viewerPositions.Count == 0) return;
+
+        var pickupSq = InteractiveFloorConsts.ManuChanFoodPickupDistance
+                     * InteractiveFloorConsts.ManuChanFoodPickupDistance;
+
+        for (var i = _foods.Count - 1; i >= 0; i--)
+        {
+            var food = _foods[i];
+            if (food == null)
+            {
+                _foods.RemoveAt(i);
+                continue;
+            }
+
+            var foodPos = food.transform.position;
+            foreach (var vp in viewerPositions)
+            {
+                var offset = vp - foodPos;
+                offset.y = 0f;
+                if (offset.sqrMagnitude > pickupSq) continue;
+
+                // Viewerが餌を回収 → 演出を再生し、くっついているマヌちゃんを一気に進化させる
+                PlayPickupEffect(foodPos);
+                EvolveAttachedManuChan(vp);
+                Destroy(food);
+                _foods.RemoveAt(i);
+                break;
+            }
+        }
+    }
+
+    /// <summary>出現範囲内のランダムな位置に餌を1つ生成する。</summary>
+    private void SpawnFood()
+    {
+        var hw = InteractiveFloorConsts.ManuChanFoodSpawnHalfWidth;
+        var hd = InteractiveFloorConsts.ManuChanFoodSpawnHalfDepth;
+        var pos = new Vector3(
+            _areaCenter.x + Random.Range(-hw, hw),
+            _areaCenter.y,
+            _areaCenter.z + Random.Range(-hd, hd));
+
+        var food = Instantiate(_foodPrefab, pos, Quaternion.identity, transform);
+        _foods.Add(food);
+    }
+
+    /// <summary>
+    /// 餌の回収位置にパーティクルを生成して再生する。再生時間が経過したら自動破棄する。
+    /// </summary>
+    private void PlayPickupEffect(Vector3 position)
+    {
+        if (_foodPickupEffect == null) return;
+
+        var effect = Instantiate(_foodPickupEffect, position, Quaternion.identity, transform);
+        effect.Play();
+
+        // パーティクル本体＋子要素の寿命を考慮して破棄するまでの時間を求める
+        var main = effect.main;
+        var lifetime = main.duration + main.startLifetime.constantMax;
+        Destroy(effect.gameObject, lifetime);
+    }
+
+    /// <summary>
+    /// 指定Viewerの近く（ManuChanFoodAttachDistance以内）にいるマヌちゃんを
+    /// 一気に次の成長段階へ進化させる。退場中の個体は対象外。
+    /// </summary>
+    private void EvolveAttachedManuChan(Vector3 viewerPos)
+    {
+        var attachSq = InteractiveFloorConsts.ManuChanFoodAttachDistance
+                     * InteractiveFloorConsts.ManuChanFoodAttachDistance;
+
+        foreach (var agent in _agents)
+        {
+            if (agent.Entity == null || !agent.Entity.IsActive || agent.Entity.IsLeaving) continue;
+
+            var offset = agent.Entity.Position - viewerPos;
+            offset.y = 0f;
+            if (offset.sqrMagnitude <= attachSq)
+                agent.Entity.AdvanceGrowthStage();
+        }
     }
 
     /// <summary>
@@ -411,6 +531,12 @@ public class ManuChanFlockController : MonoBehaviour
             Gizmos.color = new Color(0.2f, 1f, 0.3f, 0.06f);
             Gizmos.DrawCube(center, new Vector3(hw * 2f, 0.02f, hd * 2f));
         }
+
+        // 餌の出現範囲（マゼンタ）
+        var fhw = InteractiveFloorConsts.ManuChanFoodSpawnHalfWidth;
+        var fhd = InteractiveFloorConsts.ManuChanFoodSpawnHalfDepth;
+        Gizmos.color = selected ? new Color(1f, 0.2f, 0.8f, 1f) : new Color(1f, 0.2f, 0.8f, 0.4f);
+        DrawFlatRect(center, fhw, fhd);
     }
 
     private static void DrawFlatRect(Vector3 center, float hw, float hd)

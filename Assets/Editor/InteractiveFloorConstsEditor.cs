@@ -33,6 +33,14 @@ namespace InteractiveFloor.Editor
         private float manuChanMapHalfWidth;
         private float manuChanMapHalfDepth;
 
+        // 餌(エサ)システム
+        private float manuChanFoodSpawnHalfWidth;
+        private float manuChanFoodSpawnHalfDepth;
+        private float manuChanFoodSpawnProbability;
+        private int manuChanFoodMaxCount;
+        private float manuChanFoodPickupDistance;
+        private float manuChanFoodAttachDistance;
+
         // 群れ(Boids)システム
         private int manuChanMaxCount;
         private float manuChanFlockPerceptionRadius;
@@ -123,6 +131,27 @@ namespace InteractiveFloor.Editor
                 manuChanMapHalfDepth);
 
             EditorGUILayout.Space(8);
+            EditorGUILayout.LabelField("餌(エサ)システム", EditorStyles.miniBoldLabel);
+            manuChanFoodSpawnHalfWidth = EditorGUILayout.FloatField(
+                new GUIContent("餌 出現半幅 X(m)", "餌が出現する範囲のX方向の半幅 [m]。エリア中心から左右この距離内に出現する。"),
+                manuChanFoodSpawnHalfWidth);
+            manuChanFoodSpawnHalfDepth = EditorGUILayout.FloatField(
+                new GUIContent("餌 出現半幅 Z(m)", "餌が出現する範囲のZ方向の半幅 [m]。エリア中心から前後この距離内に出現する。"),
+                manuChanFoodSpawnHalfDepth);
+            manuChanFoodSpawnProbability = EditorGUILayout.FloatField(
+                new GUIContent("餌 出現確率/秒", "1秒あたりに餌が1つ出現する確率（フレームレート非依存）。大きいほど頻繁に出現する。"),
+                manuChanFoodSpawnProbability);
+            manuChanFoodMaxCount = EditorGUILayout.IntField(
+                new GUIContent("餌 最大数", "マップ上に同時に存在できる餌の最大数。"),
+                manuChanFoodMaxCount);
+            manuChanFoodPickupDistance = EditorGUILayout.FloatField(
+                new GUIContent("餌 回収距離(m)", "Viewerが餌にこの距離まで近づくと回収する [m]。"),
+                manuChanFoodPickupDistance);
+            manuChanFoodAttachDistance = EditorGUILayout.FloatField(
+                new GUIContent("餌 進化範囲(m)", "餌を回収したViewerのこの距離内にいるマヌちゃんが一気に次の段階へ進化する [m]。"),
+                manuChanFoodAttachDistance);
+
+            EditorGUILayout.Space(8);
             EditorGUILayout.LabelField("群れ(Boids)システム", EditorStyles.miniBoldLabel);
             manuChanMaxCount = EditorGUILayout.IntField(
                 new GUIContent("マップ内最大数", "同時に存在できるマヌちゃんの最大数。起動時にこの数だけスポーンする。"),
@@ -203,6 +232,13 @@ namespace InteractiveFloor.Editor
             manuChanMapHalfWidth = ParseFloat(text, "ManuChanMapHalfWidth");
             manuChanMapHalfDepth = ParseFloat(text, "ManuChanMapHalfDepth");
 
+            manuChanFoodSpawnHalfWidth = ParseFloat(text, "ManuChanFoodSpawnHalfWidth");
+            manuChanFoodSpawnHalfDepth = ParseFloat(text, "ManuChanFoodSpawnHalfDepth");
+            manuChanFoodSpawnProbability = ParseFloat(text, "ManuChanFoodSpawnProbability");
+            manuChanFoodMaxCount = ParseInt(text, "ManuChanFoodMaxCount");
+            manuChanFoodPickupDistance = ParseFloat(text, "ManuChanFoodPickupDistance");
+            manuChanFoodAttachDistance = ParseFloat(text, "ManuChanFoodAttachDistance");
+
             manuChanMaxCount = ParseInt(text, "ManuChanMaxCount");
             manuChanFlockPerceptionRadius = ParseFloat(text, "ManuChanFlockPerceptionRadius");
             manuChanSeparationRadius = ParseFloat(text, "ManuChanSeparationRadius");
@@ -246,6 +282,13 @@ namespace InteractiveFloor.Editor
 
             text = ReplaceFloat(text, "ManuChanMapHalfWidth", manuChanMapHalfWidth);
             text = ReplaceFloat(text, "ManuChanMapHalfDepth", manuChanMapHalfDepth);
+
+            text = ReplaceFloat(text, "ManuChanFoodSpawnHalfWidth", manuChanFoodSpawnHalfWidth);
+            text = ReplaceFloat(text, "ManuChanFoodSpawnHalfDepth", manuChanFoodSpawnHalfDepth);
+            text = ReplaceFloat(text, "ManuChanFoodSpawnProbability", manuChanFoodSpawnProbability);
+            text = ReplaceInt(text, "ManuChanFoodMaxCount", manuChanFoodMaxCount);
+            text = ReplaceFloat(text, "ManuChanFoodPickupDistance", manuChanFoodPickupDistance);
+            text = ReplaceFloat(text, "ManuChanFoodAttachDistance", manuChanFoodAttachDistance);
 
             text = ReplaceInt(text, "ManuChanMaxCount", manuChanMaxCount);
             text = ReplaceFloat(text, "ManuChanFlockPerceptionRadius", manuChanFlockPerceptionRadius);

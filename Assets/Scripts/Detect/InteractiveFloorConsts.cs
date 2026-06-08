@@ -21,6 +21,14 @@ namespace InteractiveFloor.Detect
         public const float ManuChanMapHalfWidth = 5f;
         public const float ManuChanMapHalfDepth = 3.5f;
 
+        // 餌(エサ)システム
+        public const float ManuChanFoodSpawnHalfWidth = 1.6f;
+        public const float ManuChanFoodSpawnHalfDepth = 1.6f;
+        public const float ManuChanFoodSpawnProbability = 3f;
+        public const int ManuChanFoodMaxCount = 2;
+        public const float ManuChanFoodPickupDistance = 0.5f;
+        public const float ManuChanFoodAttachDistance = 1f;
+
         // 群れ(Boids)システム
         public const int ManuChanMaxCount = 20;
         public const float ManuChanFlockPerceptionRadius = 1.5f;
