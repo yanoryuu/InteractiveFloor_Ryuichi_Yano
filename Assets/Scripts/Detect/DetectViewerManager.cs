@@ -13,39 +13,65 @@ namespace InteractiveFloor.Detect
         private int _nextLabelIndex = 1;
         private readonly List<TrackedSensorSnapshot> _previousSensors = new();
 
+        // 毎フレームのアロケーションを防ぐキャッシュ
+        private readonly List<Viewer> _viewers = new();
+        private readonly HashSet<int> _usedPreviousSensorIndices = new();
+        private readonly List<TrackedSensorSnapshot> _currentSnapshots = new();
+        // ラベルをキーにViewerオブジェクトを再利用（新規Viewer追加時のみ生成）
+        private readonly Dictionary<string, Viewer> _viewerCache = new();
+
         public List<Viewer> GetViewer(List<SensorObjectManager.SensorObject> sensorObjects)
         {
-            var viewers = new List<Viewer>();
+            _viewers.Clear();
+            _usedPreviousSensorIndices.Clear();
+            _currentSnapshots.Clear();
 
             if (sensorObjects == null || sensorObjects.Count == 0)
             {
                 _previousSensors.Clear();
-                return viewers;
+                return _viewers;
             }
-
-            var usedPreviousSensorIndices = new HashSet<int>();
-            var currentSnapshots = new List<TrackedSensorSnapshot>(sensorObjects.Count);
 
             foreach (var sensorObject in sensorObjects)
             {
                 var matchedPreviousIndex = FindNearestPreviousSensorIndex(
                     sensorObject.positionMedian,
-                    usedPreviousSensorIndices);
+                    _usedPreviousSensorIndices);
 
-                var labelIndex = _nextLabelIndex;
-                var label = matchedPreviousIndex >= 0
-                    ? _previousSensors[matchedPreviousIndex].Label
-                    : $"Person {_nextLabelIndex++}";
+                string label;
+                ViewerType viewerType;
 
-                var viewerType = matchedPreviousIndex >= 0
-                    ? _previousSensors[matchedPreviousIndex].ViewerType
-                    : (labelIndex % 2 == 0 ? ViewerType.Demon : ViewerType.God);
+                if (matchedPreviousIndex >= 0)
+                {
+                    label = _previousSensors[matchedPreviousIndex].Label;
+                    viewerType = _previousSensors[matchedPreviousIndex].ViewerType;
+                }
+                else
+                {
+                    // 新規Viewer追加時のみ文字列を生成する
+                    var idx = _nextLabelIndex++;
+                    label = $"Person {idx}";
+                    viewerType = idx % 2 == 0 ? ViewerType.Demon : ViewerType.God;
+                }
 
                 sensorObject.TrackingLabel = label;
 
-                viewers.Add(new Viewer(label, viewerType, ToVector3(sensorObject.positionMedian)));
+                var position = ToVector3(sensorObject.positionMedian);
 
-                currentSnapshots.Add(new TrackedSensorSnapshot
+                // Viewerオブジェクトを再利用。新規ラベルのときだけ生成。
+                if (!_viewerCache.TryGetValue(label, out var viewer))
+                {
+                    viewer = new Viewer(label, viewerType, position);
+                    _viewerCache[label] = viewer;
+                }
+                else
+                {
+                    viewer.Position = position;
+                }
+
+                _viewers.Add(viewer);
+
+                _currentSnapshots.Add(new TrackedSensorSnapshot
                 {
                     Position = sensorObject.positionMedian,
                     Label = label,
@@ -53,15 +79,13 @@ namespace InteractiveFloor.Detect
                 });
 
                 if (matchedPreviousIndex >= 0)
-                {
-                    usedPreviousSensorIndices.Add(matchedPreviousIndex);
-                }
+                    _usedPreviousSensorIndices.Add(matchedPreviousIndex);
             }
 
             _previousSensors.Clear();
-            _previousSensors.AddRange(currentSnapshots);
+            _previousSensors.AddRange(_currentSnapshots);
 
-            return viewers;
+            return _viewers;
         }
 
         private int FindNearestPreviousSensorIndex(float2 currentPosition, HashSet<int> usedPreviousSensorIndices)
@@ -71,16 +95,10 @@ namespace InteractiveFloor.Detect
 
             for (var index = 0; index < _previousSensors.Count; index++)
             {
-                if (usedPreviousSensorIndices.Contains(index))
-                {
-                    continue;
-                }
+                if (usedPreviousSensorIndices.Contains(index)) continue;
 
                 var distanceToPrevious = distance(_previousSensors[index].Position, currentPosition);
-                if (distanceToPrevious > MatchingThreshold || distanceToPrevious >= nearestDistance)
-                {
-                    continue;
-                }
+                if (distanceToPrevious > MatchingThreshold || distanceToPrevious >= nearestDistance) continue;
 
                 nearestDistance = distanceToPrevious;
                 nearestIndex = index;
@@ -96,7 +114,7 @@ namespace InteractiveFloor.Detect
             public ViewerType ViewerType;
         }
 
-        private Vector3 ToVector3(float2 position)
+        private static Vector3 ToVector3(float2 position)
         {
             return new Vector3(position.x, 0, position.y);
         }

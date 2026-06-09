@@ -9,6 +9,6 @@ public class LightManager : MonoBehaviour
     {
         _directionalLightTransform.DORotate(new Vector3(0,360,0), 30f, RotateMode.FastBeyond360)
             .SetEase(Ease.Linear)
-            .SetLoops(-1, LoopType.Restart);
+            .SetLoops(-1, LoopType.Yoyo);
     }
 }
