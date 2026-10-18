@@ -15,7 +15,7 @@ namespace InteractiveFloor.Detect
         public const float ManuChanMatchingDistance = 0.5f;
         public const float ManuChanWalkingGrowthRate = 0.001f;
         public const float ManuChanContactStayGrowthRate = 0.002f;
-        public const int ManuChanFleeViewerCountThreshold = 4;
+        public const int ManuChanFleeViewerCountThreshold = 2147483647; // int.MaxValue: 人数制限（全体逃げモード）を無効化
 
         // マップ範囲
         public const float ManuChanMapHalfWidth = 5f;
