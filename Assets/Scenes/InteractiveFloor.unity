@@ -6020,43 +6020,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!84 &1328802421
-RenderTexture:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: 
-  m_ImageContentsHash:
-    serializedVersion: 2
-    Hash: 00000000000000000000000000000000
-  m_IsAlphaChannelOptional: 0
-  serializedVersion: 6
-  m_Width: 1280
-  m_Height: 1280
-  m_AntiAliasing: 1
-  m_MipCount: -1
-  m_DepthStencilFormat: 92
-  m_ColorFormat: 8
-  m_MipMap: 0
-  m_GenerateMips: 1
-  m_SRGB: 0
-  m_UseDynamicScale: 0
-  m_UseDynamicScaleExplicit: 0
-  m_BindMS: 0
-  m_EnableCompatibleFormat: 1
-  m_EnableRandomWrite: 0
-  m_TextureSettings:
-    serializedVersion: 2
-    m_FilterMode: 1
-    m_Aniso: 1
-    m_MipBias: 0
-    m_WrapU: 1
-    m_WrapV: 1
-    m_WrapW: 1
-  m_Dimension: 2
-  m_VolumeDepth: 1
-  m_ShadowSamplingMode: 2
 --- !u!1 &1336009409
 GameObject:
   m_ObjectHideFlags: 0
@@ -6263,6 +6226,43 @@ MeshRenderer:
   m_CorrespondingSourceObject: {fileID: 1571401446828467379, guid: d5bff10ff706fed418937ef2ca81feaa, type: 3}
   m_PrefabInstance: {fileID: 1825774185}
   m_PrefabAsset: {fileID: 0}
+--- !u!84 &1570000303
+RenderTexture:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  m_ImageContentsHash:
+    serializedVersion: 2
+    Hash: 00000000000000000000000000000000
+  m_IsAlphaChannelOptional: 0
+  serializedVersion: 6
+  m_Width: 1280
+  m_Height: 1280
+  m_AntiAliasing: 1
+  m_MipCount: -1
+  m_DepthStencilFormat: 92
+  m_ColorFormat: 8
+  m_MipMap: 0
+  m_GenerateMips: 1
+  m_SRGB: 0
+  m_UseDynamicScale: 0
+  m_UseDynamicScaleExplicit: 0
+  m_BindMS: 0
+  m_EnableCompatibleFormat: 1
+  m_EnableRandomWrite: 0
+  m_TextureSettings:
+    serializedVersion: 2
+    m_FilterMode: 1
+    m_Aniso: 1
+    m_MipBias: 0
+    m_WrapU: 1
+    m_WrapV: 1
+    m_WrapW: 1
+  m_Dimension: 2
+  m_VolumeDepth: 1
+  m_ShadowSamplingMode: 2
 --- !u!1001 &1612360421
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6414,7 +6414,7 @@ PrefabInstance:
     - target: {fileID: 4910188453780198564, guid: d5bff10ff706fed418937ef2ca81feaa, type: 3}
       propertyPath: m_TargetTexture
       value: 
-      objectReference: {fileID: 1328802421}
+      objectReference: {fileID: 1570000303}
     - target: {fileID: 6297605576093970500, guid: d5bff10ff706fed418937ef2ca81feaa, type: 3}
       propertyPath: m_LocalPosition.x
       value: 2.64385
@@ -6497,7 +6497,7 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 1333ec027d8d99d429a406f61c92de94, type: 2}
     - target: {fileID: 7517880678709741601, guid: d5bff10ff706fed418937ef2ca81feaa, type: 3}
       propertyPath: _drawSensorMarkerForDebug
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8495061192624354193, guid: d5bff10ff706fed418937ef2ca81feaa, type: 3}
       propertyPath: m_LocalPosition.x
